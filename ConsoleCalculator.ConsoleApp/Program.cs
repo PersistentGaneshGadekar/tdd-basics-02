@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ConsoleCalculator.App
 {
@@ -6,19 +7,52 @@ namespace ConsoleCalculator.App
     {
         static void Main(string[] args)
         {
+            //ConsoleKeyInfo key= Console.ReadKey();
+            //Console.WriteLine(key.Key);
+            //Console.ReadLine();
+            //return;
             var calc = new Calculator();
-            ConsoleKeyInfo key;
-            Console.WriteLine("Press Ctrl + C to close the program.");
-            while (IsKillSwitch(key = Console.ReadKey(true)) == false)
+            set:
+            string val = "0"; 
+            set2:
+            val = calc.GetEnterValue(val, true);
+            Console.Clear();
+            string opration = val.Substring(val.Length - 1, 1);
+            string firstValue = val.Substring(0, val.Length - 1);
+            if (Convert.ToInt32(firstValue)  != 0)
             {
+                Console.WriteLine(firstValue);
+                //place:
+                string value = "0";
+                value = calc.GetEnterValue(value, false);
+                //ConsoleKeyInfo key= Console.ReadKey();
+                //if(key.KeyChar == '+'|| key.KeyChar == '-' || key.KeyChar == '*' || key.KeyChar == '/')
+                //{
+                //    goto place;
+                //}
+                if (opration == "/" && value == "0")
+                {
+                    Console.Clear();
+                    Console.WriteLine("-E-"); 
+                    goto set;
+                }
                 Console.Clear();
-                Console.WriteLine(calc.SendKeyPress(key.KeyChar));
+                double result = calc.Calculate(Convert.ToDouble(firstValue), Convert.ToDouble(value), opration);
+                Console.WriteLine(result.ToString());
+                if (result > 0)
+                {
+                    val = result.ToString();
+                    goto set2;
+                }
+                goto set;
             }
-        }
-
-        private static bool IsKillSwitch(ConsoleKeyInfo key)
-        {
-            return key.Key == ConsoleKey.C && key.Modifiers == ConsoleModifiers.Control;
+            else
+            {
+                goto set;
+            }
+            //Console.Clear();
+            //Console.WriteLine(calc.SendKeyPress(key.KeyChar));
+            //Console.ReadLine();
         }
     }
 }
