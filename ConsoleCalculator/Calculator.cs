@@ -11,32 +11,28 @@ namespace ConsoleCalculator
             //throw new NotImplementedException();
         }
         
-        public string GetEnterValue(string value,bool flag)
+        public string GetEnterValue(string value,bool flag,Operations operations,bool otherFlag)
         {
             ConsoleKeyInfo key;
             while (IsKillSwitch(key = Console.ReadKey(true)) == false)
             {
-                string ss=  SendKeyPress(key.KeyChar);
-                Console.WriteLine(ss);
-                if (int.TryParse(SendKeyPress(key.KeyChar), out _))
+                string inputKey=  SendKeyPress(key.KeyChar);
+                //Console.WriteLine(ss);
+                if (int.TryParse(inputKey, out _))
                 {
                     if (value == "0")
                     {
                         value = "";
                     }
-                    value +=   SendKeyPress(key.KeyChar);
-                    Console.Clear();
-                    Console.WriteLine(value);
+                    value += inputKey;
+                    operations.setConsole(value);
                 }
-                else if (!int.TryParse(  SendKeyPress(key.KeyChar), out _) &&   SendKeyPress(key.KeyChar).ToLower() == "c")
+                else if (!int.TryParse(inputKey, out _) && inputKey.ToLower() == "c")
                 {
-                    value = "0";
-                    Console.Clear();
-                    Console.WriteLine(value);
+                    return "c";
                 }
-                else if (!int.TryParse( SendKeyPress(key.KeyChar), out _) &&  SendKeyPress(key.KeyChar).ToLower() == "s")
+                else if (!int.TryParse(inputKey, out _) && inputKey.ToLower() == "s")
                 {
-                    Console.Clear();
                     if (value != "0")
                     {
                         value = Convert.ToString(Convert.ToInt32(value) * -1);
@@ -44,13 +40,22 @@ namespace ConsoleCalculator
                     {
                         value = "0";
                     }
-                    Console.WriteLine(value);
+                    operations.setConsole(value);
                 }
-                else if ((SendKeyPress(key.KeyChar) == "+" || SendKeyPress(key.KeyChar) == "-" || SendKeyPress(key.KeyChar) == "*" || SendKeyPress(key.KeyChar) == "/")  )
+                else if ((inputKey  == "+" || inputKey == "-" || inputKey == "*"))
                 {
-                    return value + SendKeyPress(key.KeyChar);
+                   // operations.setConsole(value);
+                    operations.setOperation(key.KeyChar);
+                    return value;
+                }else if(inputKey == "/"){
+                    if(value == "0" && otherFlag == true)
+                    {
+                       // return "ERR01"; 
+                    }
+                    operations.setOperation(key.KeyChar);
+                    return value;
                 }
-                else if ((SendKeyPress(key.KeyChar) == "=" || key.Key == ConsoleKey.Enter) && flag == false)
+                else if ((inputKey == "=" || key.Key == ConsoleKey.Enter) && flag == false)
                 {
                     return value;
                 }
@@ -73,7 +78,7 @@ namespace ConsoleCalculator
                     result = a * b;
                     break;
                 case "/":
-                    if(b == 0)
+                    if(b == 0 && a != 0)
                     {
                         result = 0;
                     }
